@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="page-header">
+<h1>Sign In to Proceed</h1>
+</div>
+
+<form action="{{url_for('login')}}" method=POST>
+<input type="text" name="username" class="form-control" placeholder="Username" required autofocus>
+<input type="password" name="password" class="form-control" placeholder="password" required>
+
+
+<button type="submit" class="btn btn-primary" value="Submit">Log In</button>
+</form>
+
+{%if error%}
+<br><br>
+<h3 class="bg-danger"><em>{{error}}</em></h3>
+{%endif%}
+
+{%for message in flashed_messages%}
+<br><br>
+<h3 class="bg-success"><em>{{message}}</em></h3>
+{%endfor%}
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="page-header">
+<h1>Add Entry</h1>
+</div>
+<form role="form" class="form-inline" action="{{url_for('add_entry')}}" method=POST>
+
+<div class="form-group">
+
+	<div class="input-group" style="width:10em">
+			<span class="input-group-addon" id="date"">Date</span>
+			<input type="date" aria-describedby="date" placeholder="dd/mm/yy" name="date" style="width:10em">
+	</div>
+
+	<div class="input-group">
+			<span class="input-group-addon" id="account"">Account</span>
+			<select class="form-control" name="account">
+			{%for account in accounts|sort%}
+			<option value="{{account}}">{{account}}</option>
+			{%endfor%}
+			<!--<option value="PREMIER">PREMIER</option>
+			<option value="ADVANCED">ADVANCED</option>
+			<option value="SAVINGS">SAVINGS</option>
+			<option value="DSARA GROUNDWORKS">DSARA GW</option>
+			<option value="DSARA PILING">DSARA PILING</option>-->
+			
+			</select>
+	</div>
+
+	<div class="input-group">
+			<span class="input-group-addon" id="description"">Description</span>
+			<input type="text" aria-describedby="description" placeholder="E.g. June Salary" name="description">
+	</div>
+
+	<div class="input-group" style="width:7em">
+			<span class="input-group-addon" id="amount"">Amount</span>
+			<input type="number" step="any" aria-describedby="amount" placeholder="999.99" name="amount" style="width:7em">
+	</div>
+
+	
+	
+	<div class="input-group">
+			<span class="input-group-addon" id="description"">Currency</span>
+			<select class="form-control" name="currency">
+			<option value="GBP">GBP</option>
+			<option value="MYR">MYR</option>
+			</select>
+	</div>
+
+<br><br><button type="submit" class="btn btn-primary" value="Submit">Add</button>
+</div>
+
+</form>
+
+<h1>{{test}}</h1>
+{% endblock %}
