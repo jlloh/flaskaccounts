@@ -6,7 +6,7 @@ from flask import Flask,request,session,g,redirect,url_for,abort,render_template
 
 #configuration/settings. denoted by capitals, for from_object call later
 #DATABASE='/home/pdcproc/Jia/flaskproject/flaskaccounts/database.db'
-DEBUG=True
+DEBUG=False
 SECRET_KEY='secret key'
 
 accounts={'PREMIER':'PREMIER','ADVANCED':'ADVANCED','SAVINGS':'SAVINGS','TIME DEPOSITS':'TIME DEPOSITS','DSARA GW':'DSARA GROUNDWORKS','DSARA PL':'DSARA PILING','CASH':'CASH','DSARA IN':'DSARA IN'}
@@ -25,7 +25,7 @@ app.config['DATABASE']=os.path.join(app.root_path,'database.db')
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
 
-#Special functions to request connection    
+#Special functions to request connection
 @app.before_request
 def before_request():
     g.db = connect_db()
@@ -46,13 +46,13 @@ def login():
 	if request.method=='POST':
 		username=request.form['username']
 		password=request.form['password']
-		
+
 		userdict={}
 		for row in g.db.execute('SELECT username,salt,hash from users'):
 			usernames,salt,hash1=row
 			userdict[usernames]=[salt,hash1]
-		
-		
+
+
 		if username not in userdict.keys():
 			error='Unregistered User'
 		#elif password != (app.config['USERS'])[username]:
@@ -71,7 +71,7 @@ def login():
 				session['username']=username
 				flash('Log In Successful')
 				return redirect(url_for('listall',no_rows_limit=20))
-	
+
 	return render_template('login.html',error=error)
 
 @app.route('/logout',methods=['GET','POST'])
@@ -89,18 +89,18 @@ def listall(no_rows_limit):
 	dictionary={}
 	if session['logged_in']==False:
 		return redirect(url_for('login'))
-	
-	
+
+
 	for row in g.db.execute('SELECT * FROM ENTRIES'):
 		(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
 		dictionary[ID]=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
 		max_rows=len(dictionary)
-		
+
 		if no_rows_limit!=None:
 			min_row=max_rows-no_rows_limit
 		else:
 			min_row=0
-	return render_template('main.html',output=dictionary,min_row=min_row,username=session['username'],state2="active")	
+	return render_template('main.html',output=dictionary,min_row=min_row,username=session['username'],state2="active")
 
 @app.route('/filter',methods=['POST'])
 def filter1():
@@ -114,7 +114,7 @@ def filter1():
 			if keyword in DESCRIPTION:
 				dictionary[ID]=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
 
-		return render_template('main.html',output=dictionary,min_row=0,username=session['username'],state2="active",keyword=keyword)		
+		return render_template('main.html',output=dictionary,min_row=0,username=session['username'],state2="active",keyword=keyword)
 
 @app.route('/sortdate',defaults={'no_rows':None})
 @app.route('/sortdate/<int:no_rows>')
@@ -127,12 +127,12 @@ def sortdate(no_rows):
 		(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
 		datesort=int(YEAR)*10000+int(MONTH)*100+DAY
 		dictionary.setdefault(datesort,[]).append({ID:[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]})
-		
+
 		if no_rows!=None:
 			min_row=0
 		else:
 			min_row=0
-		
+
 	return render_template('datesort.html',output=dictionary,no_rows=min_row,username=session['username'],state4="active")
 
 @app.route('/add',methods=['GET','POST'])
@@ -150,14 +150,14 @@ def add_entry():
 		amount=request.form['amount']
 		description=request.form['description']
 		currency=request.form['currency']
-		
+
 		if len(str(year))<4:
 			year=2000+int(year)
-		
+
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),account,amount,currency,description])
 		g.db.commit()
 		return redirect(url_for('listall',no_rows_limit=20))
-		
+
 @app.route('/convert',methods=['GET','POST'])
 def convert():
 	if session['logged_in']==False:
@@ -176,13 +176,13 @@ def convert():
 		currency1='GBP'
 		currency2='MYR'
 		description='GBP to MYR @ %s'%(str(rate))
-		
+
 		#First entry. From premier
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),fromaccount,amount,currency1,description])
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),toaccount,amount_conv,currency2,description])
-		
+
 		g.db.commit()
-		
+
 		return redirect(url_for('listall',no_rows_limit=20))
 
 @app.route('/transfer',methods=['GET','POST'])
@@ -201,13 +201,13 @@ def transfer():
 		amount2=float(request.form['amount'])
 		currency=request.form['currency']
 		description=request.form['description']
-		
+
 		#First entry. From premier
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),fromaccount,amount,currency,description])
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),toaccount,amount2,currency,description])
-	
+
 		g.db.commit()
-		
+
 		return redirect(url_for('listall',no_rows_limit=20))
 
 @app.route('/delete/<int:id_no>')
@@ -237,15 +237,15 @@ def edit_entry(id_no):
 		amount=request.form['amount']
 		description=request.form['description']
 		currency=request.form['currency']
-		
+
 		if len(str(year))<4:
 			year=2000+int(year)
-		
+
 		g.db.execute('UPDATE ENTRIES SET YEAR=?,MONTH=?,DAY=?,ACCOUNT=?,AMOUNT=?,CURRENCY=?,DESCRIPTION=? WHERE ID=?',[int(year),int(month),int(day),account,amount,currency,description,id_no])
 		g.db.commit()
-		return redirect(url_for('listall',no_rows_limit=20))		
+		return redirect(url_for('listall',no_rows_limit=20))
 
-@app.route('/')		
+@app.route('/')
 @app.route('/summary')
 def summary():
 	try:
@@ -280,8 +280,8 @@ def summary():
 	dsarapl_sum=sum([dsarapl[key][4] for key in dsarapl])
 	dsarain_sum=sum([dsarain[key][4] for key in dsarain])
 	fd_sum=sum([fd[key][4] for key in fd])
-	
+
 	return render_template('summary.html',premier='%.2f'%premier_sum,savings='%.2f'%savings_sum,advanced='%.2f'%advanced_sum,dsaragw='%.2f'%dsaragw_sum,fd='%.2f'%fd_sum,dsarapl='%.2f'%dsarapl_sum,dsarain='%.2f'%dsarain_sum,state3="active",username=session['username'])
 
 if __name__=='__main__':
-    app.run(host='0.0.0.0',port=5200)    
+    app.run(host='0.0.0.0',port=5200)
