@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="page-header">
+<h1>Summary</h1>
+</div>
+
+
+<!--<div class=row>
+<div class="col-md-4">
+<h2>Premier</h2>
+<h4>£ {{premier}}</h4>
+</div>
+
+<div class="col-md-4">
+<h2>Savings</h2>
+<h4>RM {{savings}}</h4>
+</div>
+
+<div class="col-md-4">
+<h2>Advanced</h2>
+<h4>RM {{advanced}}</h4>
+</div>
+
+</div>
+-->
+<!--
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Premier</th>
+<th>Savings</th>
+<th>Advanced</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="info">£ {{premier}}</td>
+<td class="success">RM {{savings}}</td>
+<td class="danger">RM {{advanced}}</td>
+</tr>
+</tbody>
+</table>
+-->
+
+<table class="table table-bordered">
+
+<tbody>
+<tr>
+	<th class="info">PREMIER</th>
+	<td class="info">£ {{premier}}</td>
+</tr>
+
+<tr>
+	<th class="success">SAVINGS</th>
+	<td class="success">RM {{savings}}</td>
+</tr>
+
+<tr>
+	<th class="danger">ADVANCED</th>
+	<td class="danger">RM {{advanced}}</td>
+</tr>
+
+<tr>
+	<th class="warning">Time Deposits</th>
+	<td class="warning">RM {{fd}}</td>
+</tr>
+
+<tr>
+	<th >DSARA GROUNDWORKS</th>
+	<td >RM {{dsaragw}}</td>
+</tr>
+
+<tr>
+	<th >DSARA PILING</th>
+	<td >RM {{dsarapl}}</td>
+</tr>
+
+<tr>
+	<th >DSARA INITIAL</th>
+	<td >RM {{dsarain}}</td>
+</tr>
+
+</tbody>
+
+
+</table>
+
+{% endblock %}

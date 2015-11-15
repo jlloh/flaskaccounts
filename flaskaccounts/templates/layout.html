@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<head>
+<title>Flask Accounts</title>
+<meta charset="utf-8">
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='pragma' content='no-cache'>
+<meta name="viewport" content="width=device width, initial-scale=1">
+
+
+
+<link rel="stylesheet" href="{{url_for('static',filename='bootstrap.min.css')}}">
+
+
+
+<link rel="stylesheet" href="{{url_for('static',filename='bootstrap-theme.min.css')}}">
+
+
+<script src="{{url_for('static',filename='jquery.min.js')}}"></script>
+<script src="{{url_for('static',filename='bootstrap.min.js')}}"></script>
+
+
+
+
+</head>
+
+<!--------------------------------------------------------------------------------------------------------------------------------->
+
+<nav class="navbar navbar-inverse">
+<div class="container-fluid">
+	<div class="navbar-header">
+	<a class="navbar-brand" href="#">FlaskAccounts</a>
+	</div>
+
+	<div id="navbar">
+		<ul class="nav navbar-nav">
+			<li class="dropdown">
+				<a class="dropdown-toggle {{state2}}" data-toggle="dropdown" href="#">ID sort<span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li><a href="{{url_for('listall',no_rows_limit=20)}}">20 Entries</a></li>
+					<li><a href="{{url_for('listall')}}">All Entries</a></li>
+				</ul>
+			</li>	
+			<li class="{{state4}}"><a href="{{url_for('sortdate',no_rows=20)}}">Date Sort</a></li>
+			<li class="{{state3}}"><a href="{{url_for('summary')}}">Summary</a></li>
+		</ul>
+		
+		{%if username%}
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="#">Current user: <em>{{username}}</em></a></li>
+			<li><a href="{{url_for('logout')}}">Logout</a></li>
+		</ul>
+		{%endif%}
+	
+	</div>
+</div>
+</nav>
+
+
+<!--------------------------------------------------------------------------------------------------------------------------------->
+
+<div class="container">
+<!--<p>Current user: <em>{{username}}</em>    <a href="{{url_for('logout')}}" class="btn btn-default btn-sm">Logout</a></p>-->
+{% block body %}{% endblock %}
+</div>
+
+</html>
+
+
+
