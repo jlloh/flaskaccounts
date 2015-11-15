@@ -1,7 +1,7 @@
 import sqlite3
 import os
 import hashlib
-from flask import Flask,request,session,g,redirect,url_for,abort,render_template,flash,send_from_directory
+from flask import Flask,request,session,g,redirect,url_for,render_template,flash
 
 
 #configuration/settings. denoted by capitals, for from_object call later
@@ -60,12 +60,12 @@ def login():
 		else:
 			#unencode the salt
 			usersalt=userdict[username][0].decode('base64')
-			usersalted=usersalt+str(password)
+			#usersalted=usersalt+str(password)
 			hashresult=hashlib.sha256(userdict[username][0]+str(password)).hexdigest()
-			hashed_object=hashlib.sha256(usersalt+str(password))
+			#hashed_object=hashlib.sha256(usersalt+str(password))
 			#compare hashes
 			if hashresult!=userdict[username][1]:
-				error=hashresult
+				error='Password Does Not Match'
 			else:
 				session['logged_in']=True
 				session['username']=username
