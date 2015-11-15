@@ -3,6 +3,7 @@ import os
 from flask import Flask,request,session,g,redirect,url_for,render_template
 
 from .views.existinguser import existinguser
+from .views.display import display
 
 accounts={'PREMIER':'PREMIER','ADVANCED':'ADVANCED','SAVINGS':'SAVINGS','TIME DEPOSITS':'TIME DEPOSITS','DSARA GW':'DSARA GROUNDWORKS','DSARA PL':'DSARA PILING','CASH':'CASH','DSARA IN':'DSARA IN'}
 currencylist=['GBP','MYR']
@@ -15,6 +16,7 @@ app.config.from_pyfile('config.py')
 app.config['DATABASE']=os.path.join(app.instance_path,'database.db')
 
 app.register_blueprint(existinguser)
+app.register_blueprint(display)
 
 #session['logged_in']=False
 #session.pop('username',None)
@@ -40,59 +42,6 @@ def add_header(response):
 
 #view functions
 
-@app.route('/show',defaults={'no_rows_limit':None})
-@app.route('/show/<int:no_rows_limit>')
-def listall(no_rows_limit):
-	#return render_template('body.html')
-	dictionary={}
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-
-	for row in g.db.execute('SELECT * FROM ENTRIES'):
-		(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
-		dictionary[ID]=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
-		max_rows=len(dictionary)
-
-		if no_rows_limit!=None:
-			min_row=max_rows-no_rows_limit
-		else:
-			min_row=0
-	return render_template('main.html',output=dictionary,min_row=min_row,username=session['username'],state2="active")
-
-@app.route('/filter',methods=['POST'])
-def filter1():
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-	if request.method=='POST':
-		dictionary={}
-		for row in g.db.execute('SELECT * FROM ENTRIES'):
-			keyword=str(request.form['keyword'])
-			(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
-			if keyword in DESCRIPTION:
-				dictionary[ID]=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
-
-		return render_template('main.html',output=dictionary,min_row=0,username=session['username'],state2="active",keyword=keyword)
-
-@app.route('/sortdate',defaults={'no_rows':None})
-@app.route('/sortdate/<int:no_rows>')
-def sortdate(no_rows):
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-	dictionary={};dictionary2={}
-	for row in g.db.execute('SELECT * FROM ENTRIES'):
-		(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
-		datesort=int(YEAR)*10000+int(MONTH)*100+DAY
-		dictionary.setdefault(datesort,[]).append({ID:[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]})
-
-		if no_rows!=None:
-			min_row=0
-		else:
-			min_row=0
-
-	return render_template('datesort.html',output=dictionary,no_rows=min_row,username=session['username'],state4="active")
-
 @app.route('/add',methods=['GET','POST'])
 def add_entry():
 	if session['logged_in']==False:
@@ -114,7 +63,7 @@ def add_entry():
 
 		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),account,amount,currency,description])
 		g.db.commit()
-		return redirect(url_for('listall',no_rows_limit=20))
+		return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/convert',methods=['GET','POST'])
 def convert():
@@ -141,7 +90,7 @@ def convert():
 
 		g.db.commit()
 
-		return redirect(url_for('listall',no_rows_limit=20))
+		return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/transfer',methods=['GET','POST'])
 def transfer():
@@ -166,7 +115,7 @@ def transfer():
 
 		g.db.commit()
 
-		return redirect(url_for('listall',no_rows_limit=20))
+		return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/delete/<int:id_no>')
 def delete_entry(id_no):
@@ -174,7 +123,7 @@ def delete_entry(id_no):
 		return redirect(url_for('login'))
 	g.db.execute('DELETE FROM ENTRIES WHERE ID=?',[id_no])
 	g.db.commit()
-	return redirect(url_for('listall',no_rows_limit=20))
+	return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/edit/<int:id_no>',methods=['GET','POST'])
 def edit_entry(id_no):
@@ -201,16 +150,16 @@ def edit_entry(id_no):
 
 		g.db.execute('UPDATE ENTRIES SET YEAR=?,MONTH=?,DAY=?,ACCOUNT=?,AMOUNT=?,CURRENCY=?,DESCRIPTION=? WHERE ID=?',[int(year),int(month),int(day),account,amount,currency,description,id_no])
 		g.db.commit()
-		return redirect(url_for('listall',no_rows_limit=20))
+		return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/')
 @app.route('/summary')
 def summary():
 	try:
 		if session['logged_in']==False:
-			return redirect(url_for('login'))
+			return redirect(url_for('existinguser.login'))
 	except KeyError:
-		return redirect(url_for('login'))
+		return redirect(url_for('existinguser.login'))
 
 	premier={};savings={};advanced={};dsaragw={};dsarapl={};dsarain={};fd={}
 	#for row in g.db.execute('SELECT * FROM ENTRIES WHERE ACCOUNT="PREMIER"'):

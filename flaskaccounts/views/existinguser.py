@@ -33,7 +33,7 @@ def login():
 				session['logged_in']=True
 				session['username']=username
 				flash('Log In Successful')
-				return redirect(url_for('listall',no_rows_limit=20))
+				return redirect(url_for('display.listall',no_rows_limit=20))
 
 	return render_template('users/login.html',error=error)
 

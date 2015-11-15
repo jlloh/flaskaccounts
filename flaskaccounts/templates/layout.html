@@ -37,11 +37,11 @@
 			<li class="dropdown">
 				<a class="dropdown-toggle {{state2}}" data-toggle="dropdown" href="#">ID sort<span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li><a href="{{url_for('listall',no_rows_limit=20)}}">20 Entries</a></li>
-					<li><a href="{{url_for('listall')}}">All Entries</a></li>
+					<li><a href="{{url_for('display.listall',no_rows_limit=20)}}">20 Entries</a></li>
+					<li><a href="{{url_for('display.listall')}}">All Entries</a></li>
 				</ul>
 			</li>
-			<li class="{{state4}}"><a href="{{url_for('sortdate',no_rows=20)}}">Date Sort</a></li>
+			<li class="{{state4}}"><a href="{{url_for('display.sortdate',no_rows=20)}}">Date Sort</a></li>
 			<li class="{{state3}}"><a href="{{url_for('summary')}}">Summary</a></li>
 			{%endif%}
 		</ul>
