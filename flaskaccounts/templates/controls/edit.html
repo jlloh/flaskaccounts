@@ -19,9 +19,9 @@
 			<select class="form-control" name="account">
 			{%for account in accounts|sort%}
 			{%if rowlist[3]==account%}
-			<option selected value="{{accounts[account]}}">{{account}}</option>
+			<option selected value="{{account}}">{{account}}</option>
 			{%else%}
-			<option value="{{accounts[account]}}">{{account}}</option>
+			<option value="{{account}}">{{account}}</option>
 			{%endif%}
 			{%endfor%}
 
