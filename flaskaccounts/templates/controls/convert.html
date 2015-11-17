@@ -4,7 +4,7 @@
 <h1>Currency Conversion Entry</h1>
 </div>
 {{date}}
-<form role="form" class="form-inline" action="{{url_for('convert')}}" method=POST>
+<form role="form" class="form-inline" action="{{url_for('controller.convert')}}" method=POST>
 
 <div class="form-group">
 
@@ -39,14 +39,14 @@
 	</div>
 
 	<br><br>
-	
+
 
 	<div class="input-group">
 			<span class="input-group-addon" id="amount"">Amount</span>
 			<input type="number" step="any" aria-describedby="amount" placeholder="999.99" name="amount">
 	</div>
 
-	
+
 	<br><br>
 	<div class="input-group">
 			<span class="input-group-addon" id="description"">Currency</span>
@@ -55,7 +55,7 @@
 			<option value="MYR">MYR</option>
 			</select>
 	</div>
-	
+
 	<div class="input-group" >
 			<span class="input-group-addon" id="rate"">Rate</span>
 			<input type="number" step="any" aria-describedby="rate" placeholder="5.5" name="rate">

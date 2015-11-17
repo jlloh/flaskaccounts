@@ -4,6 +4,7 @@ from flask import Flask,request,session,g,redirect,url_for,render_template
 
 from .views.existinguser import existinguser
 from .views.display import display
+from .views.controller import controller
 
 accounts={'PREMIER':'PREMIER','ADVANCED':'ADVANCED','SAVINGS':'SAVINGS','TIME DEPOSITS':'TIME DEPOSITS','DSARA GW':'DSARA GROUNDWORKS','DSARA PL':'DSARA PILING','CASH':'CASH','DSARA IN':'DSARA IN'}
 currencylist=['GBP','MYR']
@@ -17,6 +18,7 @@ app.config['DATABASE']=os.path.join(app.instance_path,'database.db')
 
 app.register_blueprint(existinguser)
 app.register_blueprint(display)
+app.register_blueprint(controller)
 
 #session['logged_in']=False
 #session.pop('username',None)
@@ -42,115 +44,6 @@ def add_header(response):
 
 #view functions
 
-@app.route('/add',methods=['GET','POST'])
-def add_entry():
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-	if request.method=='GET':
-		return render_template('add.html',accounts=accounts)
-	elif request.method=='POST':
-		date=request.form['date']
-		#return render_template('add.html',date=date)
-		(year,month,day)=date.split('-')
-		account=request.form['account']
-		amount=request.form['amount']
-		description=request.form['description']
-		currency=request.form['currency']
-
-		if len(str(year))<4:
-			year=2000+int(year)
-
-		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),account,amount,currency,description])
-		g.db.commit()
-		return redirect(url_for('display.listall',no_rows_limit=20))
-
-@app.route('/convert',methods=['GET','POST'])
-def convert():
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-	if request.method=='GET':
-		return render_template('convert.html')
-	elif request.method=='POST':
-		date=request.form['date']
-		(year,month,day)=date.split('-')
-		fromaccount=request.form['fromaccount']
-		toaccount=request.form['toaccount']
-		amount=float(request.form['amount'])*-1
-		rate=request.form['rate']
-		amount_conv='%.2f'%(float(rate)*float(amount)*-1)
-		currency1='GBP'
-		currency2='MYR'
-		description='GBP to MYR @ %s'%(str(rate))
-
-		#First entry. From premier
-		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),fromaccount,amount,currency1,description])
-		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),toaccount,amount_conv,currency2,description])
-
-		g.db.commit()
-
-		return redirect(url_for('display.listall',no_rows_limit=20))
-
-@app.route('/transfer',methods=['GET','POST'])
-def transfer():
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-	if request.method=='GET':
-		return render_template('transfer.html',accounts=accounts)
-	elif request.method=='POST':
-		date=request.form['date']
-		(year,month,day)=date.split('-')
-		fromaccount=request.form['fromaccount']
-		toaccount=request.form['toaccount']
-		amount=float(request.form['amount'])*-1
-		amount2=float(request.form['amount'])
-		currency=request.form['currency']
-		description=request.form['description']
-
-		#First entry. From premier
-		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),fromaccount,amount,currency,description])
-		g.db.execute('INSERT INTO ENTRIES (YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION) VALUES(?,?,?,?,?,?,?)',[int(year),int(month),int(day),toaccount,amount2,currency,description])
-
-		g.db.commit()
-
-		return redirect(url_for('display.listall',no_rows_limit=20))
-
-@app.route('/delete/<int:id_no>')
-def delete_entry(id_no):
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-	g.db.execute('DELETE FROM ENTRIES WHERE ID=?',[id_no])
-	g.db.commit()
-	return redirect(url_for('display.listall',no_rows_limit=20))
-
-@app.route('/edit/<int:id_no>',methods=['GET','POST'])
-def edit_entry(id_no):
-	if session['logged_in']==False:
-		return redirect(url_for('login'))
-
-	if request.method=='GET':
-		for row in g.db.execute('SELECT * FROM ENTRIES WHERE ID=?',[id_no]):
-			(ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
-			rowlist=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
-			#         0    1     2     3      4      5         6
-		return render_template('edit.html',rowlist=rowlist,accounts=accounts,id1=id_no,currency=currencylist,username=session['username'])
-	elif request.method=='POST':
-		date=request.form['date']
-		#return render_template('add.html',date=date)
-		(year,month,day)=date.split('-')
-		account=request.form['account']
-		amount=request.form['amount']
-		description=request.form['description']
-		currency=request.form['currency']
-
-		if len(str(year))<4:
-			year=2000+int(year)
-
-		g.db.execute('UPDATE ENTRIES SET YEAR=?,MONTH=?,DAY=?,ACCOUNT=?,AMOUNT=?,CURRENCY=?,DESCRIPTION=? WHERE ID=?',[int(year),int(month),int(day),account,amount,currency,description,id_no])
-		g.db.commit()
-		return redirect(url_for('display.listall',no_rows_limit=20))
 
 @app.route('/')
 @app.route('/summary')

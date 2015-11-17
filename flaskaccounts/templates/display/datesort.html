@@ -21,7 +21,7 @@
 {%for date in output|sort%}
 	{%for dictionary in output[date]%}
 		{%for id in dictionary%}
-		
+
 			{%if dictionary[id][3]=='PREMIER' %}
 				<tr class="info">
 			{%elif dictionary[id][3]=='ADVANCED'%}
@@ -36,15 +36,15 @@
 			<td>{{dictionary[id][6]}}</td>
 			<td>{{dictionary[id][4]}}</td>
 			<td>{{dictionary[id][5]}}</td>
-			<td><a href="{{url_for('delete_entry',id_no=id)}}">Delete</a></td>
-		
-		</tr>	
-			
-			
-			
-			
-			
-			
+			<td><a href="{{url_for('controller.delete_entry',id_no=id)}}">Delete</a></td>
+
+		</tr>
+
+
+
+
+
+
 		{%endfor%}
 	{%endfor%}
 {%endfor%}
@@ -52,7 +52,7 @@
 </table>
 
 
-<a href="{{url_for('add_entry')}}{{a}}" role="button" class="btn btn-primary">Add</a>
-<a href="{{url_for('convert')}}{{a}}" role="button" class="btn btn-primary">Convert currency</a>
-<a href="{{url_for('transfer')}}{{a}}" role="button" class="btn btn-primary">Transfer</a>
+<a href="{{url_for('controller.add_entry')}}{{a}}" role="button" class="btn btn-primary">Add</a>
+<a href="{{url_for('controller.convert')}}{{a}}" role="button" class="btn btn-primary">Convert currency</a>
+<a href="{{url_for('controller.transfer')}}{{a}}" role="button" class="btn btn-primary">Transfer</a>
 {% endblock %}
