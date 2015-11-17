@@ -4,7 +4,7 @@
 <h1>Add Entry</h1>
 </div>
 {{rowlist}}
-<form role="form" class="form-inline" action="{{url_for('edit_entry',id_no=id1)}}" method=POST>
+<form role="form" class="form-inline" action="{{url_for('controller.edit_entry',id_no=id1)}}" method=POST>
 
 <div class="form-group">
 
@@ -38,8 +38,8 @@
 			<input type="number" step="any" aria-describedby="amount" placeholder="999.99" name="amount" value={{rowlist[4]}} style="width:7em">
 	</div>
 
-	
-	
+
+
 	<div class="input-group">
 			<span class="input-group-addon" id="description"">Currency</span>
 			<select class="form-control" name="currency">
