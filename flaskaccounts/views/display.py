@@ -9,7 +9,7 @@ def listall(no_rows_limit):
 	#return render_template('body.html')
 	dictionary={}
 	if session['logged_in']==False:
-		return redirect(url_for('users.login'))
+		return redirect(url_for('existinguser.login'))
 
 
 	for row in g.db.execute('SELECT * FROM ENTRIES'):
@@ -26,7 +26,7 @@ def listall(no_rows_limit):
 @display.route('/filter',methods=['POST'])
 def filter1():
 	if session['logged_in']==False:
-		return redirect(url_for('login'))
+		return redirect(url_for('existinguser.login'))
 	if request.method=='POST':
 		dictionary={}
 		for row in g.db.execute('SELECT * FROM ENTRIES'):
@@ -41,7 +41,7 @@ def filter1():
 @display.route('/sortdate/<int:no_rows>')
 def sortdate(no_rows):
 	if session['logged_in']==False:
-		return redirect(url_for('login'))
+		return redirect(url_for('existinguser.login'))
 
 	dictionary={};dictionary2={}
 	for row in g.db.execute('SELECT * FROM ENTRIES'):

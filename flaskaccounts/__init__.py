@@ -5,6 +5,7 @@ from flask import Flask,request,session,g,redirect,url_for,render_template
 from .views.existinguser import existinguser
 from .views.display import display
 from .views.controller import controller
+from .views.newuser import newuser
 
 accounts={'PREMIER':'PREMIER','ADVANCED':'ADVANCED','SAVINGS':'SAVINGS','TIME DEPOSITS':'TIME DEPOSITS','DSARA GW':'DSARA GROUNDWORKS','DSARA PL':'DSARA PILING','CASH':'CASH','DSARA IN':'DSARA IN'}
 currencylist=['GBP','MYR']
@@ -19,6 +20,7 @@ app.config['DATABASE']=os.path.join(app.instance_path,'database.db')
 app.register_blueprint(existinguser)
 app.register_blueprint(display)
 app.register_blueprint(controller)
+app.register_blueprint(newuser)
 
 #session['logged_in']=False
 #session.pop('username',None)

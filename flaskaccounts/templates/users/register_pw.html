@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="page-header">
+<h1>{{currentuser}} : Enter Password</h1>
+</div>
+
+<form action="{{url_for('newuser.register_pw')}}" method=POST>
+<input type="password" name="password" class="form-control" placeholder="Password" required autofocus>
+<input type="password" name="password2" class="form-control" placeholder="Confirm Password" required autofocus>
+<!--<input type="password" name="password" class="form-control" placeholder="password" required>-->
+
+
+<button type="submit" class="btn btn-info" value="Submit">Next</button>
+</form>
+
+{%if error%}
+<!--<br><br>
+<h3 class="bg-danger"><em>{{error}}</em></h3>-->
+{%endif%}
+
+{% with messages = get_flashed_messages() %}
+    {%if messages%}
+    {%for message in messages%}
+    <br><br>
+    <h3 class="bg-success"><em>{{message}}</em></h3>
+    {%endfor%}
+    {%endif%}
+{%endwith%}
+
+{% endblock %}
