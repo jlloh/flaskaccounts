@@ -1,4 +1,6 @@
 from flask import Blueprint,render_template,g,request,redirect,url_for,session
+from flask.ext.login import login_required
+from flask.ext.login import current_user
 
 controller=Blueprint('controller',__name__)
 
@@ -8,14 +10,15 @@ controller=Blueprint('controller',__name__)
 currencylist=['GBP','MYR']
 
 @controller.route('/add',methods=['GET','POST'])
+@login_required
 def add_entry():
     accounts=[]
-    if session['logged_in']==False:
-        return redirect(url_for('users.login',username=session['username']))
+    #if session['logged_in']==False:
+    #    return redirect(url_for('users.login',username=session['username']))
 
     if request.method=='GET':
         #return render_template('controls/add.html',accounts=accounts)
-	for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[session['username']]):
+	for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[current_user.username]):
             username,account=row
             accounts.append(str(account.upper()))
         return render_template('controls/add.html',accounts=accounts)
@@ -35,14 +38,14 @@ def add_entry():
 	g.db.commit()
 	return redirect(url_for('display.listall',no_rows_limit=20))
 
-
 @controller.route('/convert',methods=['GET','POST'])
+@login_required
 def convert():
-    if session['logged_in']==False:
-        return redirect(url_for('users.login'))
+    #if session['logged_in']==False:
+    #    return redirect(url_for('users.login'))
 
     if request.method=='GET':
-	return render_template('controls/convert.html',username=session['username'])
+	return render_template('controls/convert.html',username=current_user.username)
     elif request.method=='POST':
 	date=request.form['date']
 	(year,month,day)=date.split('-')
@@ -62,16 +65,17 @@ def convert():
 	return redirect(url_for('display.listall',no_rows_limit=20))
 
 @controller.route('/transfer',methods=['GET','POST'])
+@login_required
 def transfer():
     accounts=[]
-    if session['logged_in']==False:
-	return redirect(url_for('users.login'))
+    #if session['logged_in']==False:
+	#return redirect(url_for('users.login'))
 
     if request.method=='GET':
-        for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[session['username']]):
+        for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[current_user.username]):
             username,account=row
             accounts.append(str(account.upper()))
-	return render_template('controls/transfer.html',accounts=accounts,username=session['username'])
+	return render_template('controls/transfer.html',accounts=accounts,username=current_user.username)
 
     elif request.method=='POST':
         date=request.form['date']
@@ -90,27 +94,29 @@ def transfer():
 	return redirect(url_for('display.listall',no_rows_limit=20))
 
 @controller.route('/delete/<int:id_no>')
+@login_required
 def delete_entry(id_no):
-    if session['logged_in']==False:
-	return redirect(url_for('login'))
+    #if session['logged_in']==False:
+	#return redirect(url_for('login'))
     g.db.execute('DELETE FROM ENTRIES WHERE ID=?',[id_no])
     g.db.commit()
     return redirect(url_for('display.listall',no_rows_limit=20))
 
 @controller.route('/edit/<int:id_no>',methods=['GET','POST'])
+@login_required
 def edit_entry(id_no):
     accounts=[]
-    if session['logged_in']==False:
-	return redirect(url_for('users.login'))
+    #if session['logged_in']==False:
+	#return redirect(url_for('users.login'))
     if request.method=='GET':
-        for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[session['username']]):
+        for row in g.db.execute("SELECT username,account FROM ACCOUNTNAME where username=?",[current_user.username]):
             username,account=row
             accounts.append(str(account.upper()))
 	for row in g.db.execute('SELECT * FROM ENTRIES WHERE ID=?',[id_no]):
             (ID,YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION)=row
             rowlist=[YEAR,MONTH,DAY,ACCOUNT,AMOUNT,CURRENCY,DESCRIPTION]
             #         0    1     2     3      4      5         6
-        return render_template('controls/edit.html',rowlist=rowlist,accounts=accounts,id1=id_no,currency=currencylist,username=session['username'])
+        return render_template('controls/edit.html',rowlist=rowlist,accounts=accounts,id1=id_no,currency=currencylist,username=current_user.username)
     elif request.method=='POST':
 	date=request.form['date']
 	#return render_template('controls/add.html',date=date)
