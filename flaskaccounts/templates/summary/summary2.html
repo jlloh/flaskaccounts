@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<div class="page-header">
+<h1>Summary</h1>
+</div>
+
+<table class="table table-bordered">
+
+<tbody>
+
+
+<tr>
+	<th class="info">PREMIER</th>
+	<td class="info">£ {{accounts['PREMIER']}}</td>
+</tr>
+
+<tr>
+	<th class="success">SAVINGS</th>
+	<td class="success">RM {{accounts['SAVINGS']}}</td>
+</tr>
+
+<tr>
+	<th class="danger">ADVANCED</th>
+	<td class="danger">RM {{accounts['ADVANCED']}}</td>
+</tr>
+
+
+{%for account in accounts%}
+	
+	{%if account!='PREMIER' and account!='ADVANCED' and account!='SAVINGS'%}
+
+	<tr>
+		<th>{{account}}</th>
+		<td>RM {{accounts[account]}}</td>
+	</tr>
+	{%endif%}
+{%endfor%}
+
+
+
+</tbody>
+
+
+</table>
+
+{% endblock %}

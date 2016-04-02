@@ -41,10 +41,11 @@ class User:
 		    hashed,=row
         con.close()
 
+
         if hashed==None:
             self.is_anonymous0=True
         else:
-            hashedresult=bcrypt.hashpw(password,hashed)
+            hashedresult=bcrypt.hashpw(password.encode('utf-8'),hashed.encode('utf-8'))
             if hashedresult==str(hashed):
                 self.is_authenticated0=True
             else:
